@@ -1,0 +1,39 @@
+# To get started with security, check out the documentation:
+# https://symfony.com/doc/current/security.html
+security:
+    encoders:
+        ApiBundle\Entity\User: plaintext
+
+    # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
+    providers:
+        database_users:
+            entity: { class: ApiBundle:User }
+
+    firewalls:
+        security:
+            pattern: ^/api/security/
+            anonymous: true
+            stateless: true
+        api:
+            pattern: ^/api/
+            stateless: true
+            guard:
+                authenticators:
+                    - 'ApiBundle\Security\JwtTokenAuthenticator'
+        main:
+            pattern: ^/
+            anonymous: true
+            form_login:
+                # The route name that the login form submits to
+                check_path: security_login_check
+                login_path: homepage
+
+            logout:
+                # The route name the user can go to in order to logout
+                path: security_logout
+
+    access_control:
+        - { path: ^/_wdt|_profiler, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        # allow anonymous API - if auth is needed, it's handled in the controller
+        - { path: ^/api, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }

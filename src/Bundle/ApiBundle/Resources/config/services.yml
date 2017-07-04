@@ -1,0 +1,28 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    AppVerk\ApiExceptionBundle\Factory\ResponseFactoryInterface:
+        class: '%appverk_api_exception.response_factory%'
+
+    ApiBundle\Security\JwtTokenAuthenticator:
+        arguments:
+            $responseFactory: '@AppVerk\ApiExceptionBundle\Factory\ResponseFactoryInterface'
+        autoconfigure: false
+
+    # makes classes in src/AppBundle available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    ApiBundle\:
+        resource: '../../../ApiBundle/*'
+        # you can exclude directories or files
+        # but if a service is unused, it's removed anyway
+        exclude: '../../../ApiBundle/{Entity,Repository,Tests}'
+
+    # controllers are imported separately to make sure they're public
+    # and have a tag that allows actions to type-hint services
+    ApiBundle\Controller\:
+        resource: '../../../ApiBundle/Controller'
+        public: true
+        tags: ['controller.service_arguments']
