@@ -2,7 +2,7 @@
 language: php
 
 # Allows use container-based infrastructure
-sudo: false
+sudo: true #for editing /etc/hosts file
 
 # Start mysql service
 services:
@@ -47,4 +47,5 @@ notifications:
   email: michal.jedraszczyk@appverk.com
 
 script: ./vendor/bin/phpunit --configuration phpunit.xml.dist
-
+addons:
+  hostame: baseapi.app
