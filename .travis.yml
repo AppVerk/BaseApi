@@ -47,6 +47,4 @@ notifications:
   email: michal.jedraszczyk@appverk.com
 
 script: ./vendor/bin/phpunit --configuration phpunit.xml.dist
-addons:
-  hosts:
-    - http://baseapi.app
+
