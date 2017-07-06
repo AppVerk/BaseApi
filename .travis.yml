@@ -38,12 +38,12 @@ install:
   - cp app/config/parameters.yml.dist app/config/parameters.yml
   - php bin/console doctrine:database:create --env=test
   - php bin/console doctrine:schema:create --env=test
+  - mkdir -p var/jwt
+  - openssl genrsa -passout pass:jwt -out var/jwt/private.pem -aes256 4096
+  - openssl rsa -passin pass:jwt -pubout -in var/jwt/private.pem -out var/jwt/public.pem
 
 # After a build, send email notification with the build results
 notifications:
   email: michal.jedraszczyk@appverk.com
 
 script: ./vendor/bin/phpunit --configuration phpunit.xml.dist
-addons:
-  hosts:
-    - baseapi.app
