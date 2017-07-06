@@ -1,0 +1,5 @@
+ApiBundle\Entity\ApiClient:
+    client1:
+        name: test_app
+        clientId: 1
+        secret: secret

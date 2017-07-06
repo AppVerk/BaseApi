@@ -1,0 +1,5 @@
+ApiBundle\Entity\User:
+    user1:
+        username: test
+        email: test@test.foo
+        password: test

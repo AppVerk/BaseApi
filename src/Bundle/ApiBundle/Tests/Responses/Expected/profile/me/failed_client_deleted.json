@@ -1,0 +1,6 @@
+{
+  "detail": "Client doesn't exist",
+  "status": 401,
+  "type": "about:blank",
+  "title": "Unauthorized"
+}

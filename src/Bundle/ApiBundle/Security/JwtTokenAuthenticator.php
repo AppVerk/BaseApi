@@ -2,12 +2,16 @@
 
 namespace ApiBundle\Security;
 
+use ApiBundle\Doctrine\UserManager;
 use AppVerk\ApiExceptionBundle\Api\ApiProblem;
 use AppVerk\ApiExceptionBundle\Component\Factory\ResponseFactoryInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use Component\Doctrine\ApiAccessTokenManagerInterface;
+use Component\Doctrine\ApiClientManagerInterface;
+use Component\Model\ApiAccessTokenInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\AuthorizationHeaderTokenExtractor;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
@@ -18,17 +22,23 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 class JwtTokenAuthenticator extends AbstractGuardAuthenticator
 {
     private $jwtEncoder;
-    private $entityManager;
     private $responseFactory;
+    private $userManager;
+    /**
+     * @var ApiClientManagerInterface
+     */
+    private $apiClientManager;
 
     public function __construct(
         JWTEncoderInterface $jwtEncoder,
-        EntityManagerInterface $entityManager,
-        ResponseFactoryInterface $responseFactory
+        ResponseFactoryInterface $responseFactory,
+        UserManager $userManager,
+        ApiClientManagerInterface $apiClientManager
     ) {
         $this->jwtEncoder = $jwtEncoder;
-        $this->entityManager = $entityManager;
         $this->responseFactory = $responseFactory;
+        $this->userManager = $userManager;
+        $this->apiClientManager = $apiClientManager;
     }
 
     public function getCredentials(Request $request)
@@ -49,17 +59,29 @@ class JwtTokenAuthenticator extends AbstractGuardAuthenticator
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $data = $this->jwtEncoder->decode($credentials);
+        try{
+            $data = $this->jwtEncoder->decode($credentials);
+        }catch (\Exception $e){
+            throw new CustomUserMessageAuthenticationException('Invalid Token');
+        }
 
         if ($data === false) {
             throw new CustomUserMessageAuthenticationException('Invalid Token');
         }
 
+        if(!isset($data['client'])){
+            throw new CustomUserMessageAuthenticationException('Client data not found in token');
+        }
+
+        $client = $this->apiClientManager->clientExists($data['client']);
+
+        if($client === false){
+            throw new CustomUserMessageAuthenticationException('Client doesn\'t exist');
+        }
+
         $username = $data['username'];
 
-        return $this->entityManager
-            ->getRepository('ApiBundle:User')
-            ->findOneBy(['username' => $username]);
+        return $this->userManager->findUserByUsername($username);
     }
 
     public function checkCredentials($credentials, UserInterface $user)

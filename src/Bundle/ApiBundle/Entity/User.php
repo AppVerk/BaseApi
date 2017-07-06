@@ -8,7 +8,6 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
  * @Serializer\ExclusionPolicy("all")
- * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="ApiBundle\Repository\UserRepository")
  */
 class User implements AdvancedUserInterface

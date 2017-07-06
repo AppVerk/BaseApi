@@ -27,10 +27,11 @@ class SecurityController extends Controller
      */
     public function newTokenAction(Request $request)
     {
-
         $token = $this->jwtTokenFactory->createToken(
             $request->request->get('_username'),
-            $request->request->get('_password')
+            $request->request->get('_password'),
+            $request->request->get('_client'),
+            $request->request->get('_secret')
         );
 
         return new JsonResponse(['token' => $token]);

@@ -18,7 +18,7 @@ services:
         resource: '../../../ApiBundle/*'
         # you can exclude directories or files
         # but if a service is unused, it's removed anyway
-        exclude: '../../../ApiBundle/{Entity,Repository,Tests}'
+        exclude: '../../../ApiBundle/{Entity,Repository,Tests,Doctrine}'
 
     # controllers are imported separately to make sure they're public
     # and have a tag that allows actions to type-hint services

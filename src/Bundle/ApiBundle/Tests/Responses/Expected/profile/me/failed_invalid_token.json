@@ -1,0 +1,6 @@
+{
+  "detail": "Invalid Token",
+  "status": 401,
+  "type": "about:blank",
+  "title": "Unauthorized"
+}

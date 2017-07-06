@@ -7,13 +7,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class UserController extends Controller
+class ProfileController extends Controller
 {
     /**
-     * @Route("/api/user/me")
+     * @Route("/api/profile/me")
      * @Method("GET")
      */
-    public function userAction()
+    public function meAction()
     {
         return new JsonResponse(['user' => $this->getUser()]);
     }

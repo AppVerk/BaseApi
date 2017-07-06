@@ -1,0 +1,6 @@
+{
+  "detail": "Client data not found in token",
+  "status": 401,
+  "type": "about:blank",
+  "title": "Unauthorized"
+}

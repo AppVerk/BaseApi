@@ -4,6 +4,19 @@ services:
         autoconfigure: true
         public: false
 
+    ApiBundle\Doctrine\NamingStrategy\CompanyNamingStrategy:
+        arguments:
+            $kernel: '@kernel'
+        public: true
+
     ApiBundle\Doctrine\UserManager:
         arguments:
             $className: ApiBundle\Entity\User
+
+    ApiBundle\Doctrine\ApiAccessTokenManager:
+        arguments:
+            $className: ApiBundle\Entity\ApiAccessToken
+
+    ApiBundle\Doctrine\ApiClientManager:
+        arguments:
+            $className: ApiBundle\Entity\ApiClient
