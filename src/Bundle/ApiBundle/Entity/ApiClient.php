@@ -2,9 +2,9 @@
 
 namespace ApiBundle\Entity;
 
+use Component\Model\ApiClientInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
-use Component\Model\ApiClientInterface;
 
 /**
  * @Serializer\ExclusionPolicy("all")
@@ -13,33 +13,29 @@ use Component\Model\ApiClientInterface;
 class ApiClient implements ApiClientInterface
 {
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
      * @ORM\Column(type="string")
      */
     protected $name;
-
-    /**
-     * @ORM\Column(type="string")
-     */
-    private $clientId;
-
-    /**
-     * @ORM\Column(type="string")
-     */
-    private $secret;
-
     /**
      * @var boolean
      *
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $enabled;
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $clientId;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $secret;
 
     /**
      * @return mixed

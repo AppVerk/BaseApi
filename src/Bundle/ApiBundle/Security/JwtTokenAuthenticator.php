@@ -3,18 +3,15 @@
 namespace ApiBundle\Security;
 
 use ApiBundle\Doctrine\UserManager;
-use AppVerk\ApiExceptionBundle\Api\ApiProblem;
+use AppVerk\ApiExceptionBundle\Component\Factory\ApiProblemFactoryInterface;
 use AppVerk\ApiExceptionBundle\Component\Factory\ResponseFactoryInterface;
-use Component\Doctrine\ApiAccessTokenManagerInterface;
+use AppVerk\ApiExceptionBundle\Exception\ApiProblemException;
 use Component\Doctrine\ApiClientManagerInterface;
-use Component\Model\ApiAccessTokenInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\AuthorizationHeaderTokenExtractor;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
@@ -28,17 +25,23 @@ class JwtTokenAuthenticator extends AbstractGuardAuthenticator
      * @var ApiClientManagerInterface
      */
     private $apiClientManager;
+    /**
+     * @var ApiProblemFactoryInterface
+     */
+    private $apiProblemFactory;
 
     public function __construct(
         JWTEncoderInterface $jwtEncoder,
         ResponseFactoryInterface $responseFactory,
         UserManager $userManager,
-        ApiClientManagerInterface $apiClientManager
+        ApiClientManagerInterface $apiClientManager,
+        ApiProblemFactoryInterface $apiProblemFactory
     ) {
         $this->jwtEncoder = $jwtEncoder;
         $this->responseFactory = $responseFactory;
         $this->userManager = $userManager;
         $this->apiClientManager = $apiClientManager;
+        $this->apiProblemFactory = $apiProblemFactory;
     }
 
     public function getCredentials(Request $request)
@@ -59,24 +62,28 @@ class JwtTokenAuthenticator extends AbstractGuardAuthenticator
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        try{
+        try {
             $data = $this->jwtEncoder->decode($credentials);
-        }catch (\Exception $e){
-            throw new CustomUserMessageAuthenticationException('Invalid Token');
+        } catch (\Exception $e) {
+            $ApiProblem = $this->apiProblemFactory->create(401, null, 'security.token.error.invalid');
+            throw new ApiProblemException($ApiProblem);
         }
 
         if ($data === false) {
-            throw new CustomUserMessageAuthenticationException('Invalid Token');
+            $ApiProblem = $this->apiProblemFactory->create(401, null, 'security.token.error.invalid');
+            throw new ApiProblemException($ApiProblem);
         }
 
-        if(!isset($data['client'])){
-            throw new CustomUserMessageAuthenticationException('Client data not found in token');
+        if (!isset($data['client'])) {
+            $ApiProblem = $this->apiProblemFactory->create(401, null, 'security.token.error.data_not_found');
+            throw new ApiProblemException($ApiProblem);
         }
 
         $client = $this->apiClientManager->clientExists($data['client']);
 
-        if($client === false){
-            throw new CustomUserMessageAuthenticationException('Client doesn\'t exist');
+        if ($client === false) {
+            $ApiProblem = $this->apiProblemFactory->create(401, null, 'security.token.error.client_not_found');
+            throw new ApiProblemException($ApiProblem);
         }
 
         $username = $data['username'];
@@ -91,9 +98,7 @@ class JwtTokenAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        $ApiProblem = new ApiProblem(401);
-        // you could translate this
-        $ApiProblem->set('detail', $exception->getMessageKey());
+        $ApiProblem = $this->apiProblemFactory->create(401, null, $exception->getMessageKey());
 
         return $this->responseFactory->createResponse($ApiProblem);
     }
@@ -104,10 +109,8 @@ class JwtTokenAuthenticator extends AbstractGuardAuthenticator
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        $ApiProblem = new ApiProblem(401);
-        // you could translate this
         $message = $authException ? $authException->getMessageKey() : 'Missing credentials';
-        $ApiProblem->set('detail', $message);
+        $ApiProblem = $this->apiProblemFactory->create(401, null, $message);
 
         return $this->responseFactory->createResponse($ApiProblem);
     }

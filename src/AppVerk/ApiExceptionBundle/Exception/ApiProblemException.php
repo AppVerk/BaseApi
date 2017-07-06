@@ -2,15 +2,19 @@
 
 namespace AppVerk\ApiExceptionBundle\Exception;
 
-use AppVerk\ApiExceptionBundle\Api\ApiProblem;
+use AppVerk\ApiExceptionBundle\Component\Api\ApiProblemInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ApiProblemException extends HttpException
 {
     private $apiProblem;
 
-    public function __construct(ApiProblem $apiProblem, \Exception $previous = null, array $headers = [], $code = 0)
-    {
+    public function __construct(
+        ApiProblemInterface $apiProblem,
+        \Exception $previous = null,
+        array $headers = [],
+        $code = 0
+    ) {
         $this->apiProblem = $apiProblem;
         $statusCode = $apiProblem->getStatusCode();
         $message = $apiProblem->getTitle();

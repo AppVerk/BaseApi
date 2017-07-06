@@ -9,6 +9,16 @@ use Doctrine\Common\Persistence\ObjectRepository;
 
 class ApiClientManager extends AbstractManager implements ApiClientManagerInterface
 {
+    public function findClientByCredentials(string $clientId, string $secret)
+    {
+        return $this->getRepository()->findOneBy(
+            [
+                'clientId' => $clientId,
+                'secret'   => $secret,
+            ]
+        );
+    }
+
     /**
      * @return ObjectRepository
      */
@@ -20,17 +30,7 @@ class ApiClientManager extends AbstractManager implements ApiClientManagerInterf
         return $userRepository;
     }
 
-    public function findClientByCredentials(string $clientId, string $secret)
-    {
-        return $this->getRepository()->findOneBy(
-            [
-                'clientId' => $clientId,
-                'secret'   => $secret,
-            ]
-        );
-    }
-
-    public function clientExists(string $clientId) : bool
+    public function clientExists(string $clientId): bool
     {
         return ($this->getRepository()->findOneBy(['clientId' => $clientId]) !== null);
     }
@@ -39,7 +39,7 @@ class ApiClientManager extends AbstractManager implements ApiClientManagerInterf
     {
         $client = $this->getRepository()->findOneBy(
             [
-                'clientId' => $clientId
+                'clientId' => $clientId,
             ]
         );
 

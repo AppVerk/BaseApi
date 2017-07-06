@@ -18,6 +18,42 @@ class CompanyNamingStrategy implements NamingStrategy
         $this->prefix = $kernel->getContainer()->getParameter('doctrine_table_prefix');
     }
 
+    private function getNamingMap(KernelInterface $kernel)
+    {
+        $map = [];
+        /**
+         * @var BundleInterface $bundle ;
+         */
+        foreach ($kernel->getBundles() as $bundle) {
+            $bundleNamespace = (new \ReflectionClass(get_class($bundle)))->getNamespaceName();
+            $bundleName = $bundle->getName();
+            if (isset($configuration['map'][$bundleName])) {
+                $map[$this->underscore($configuration['map'][$bundleName])] = $bundleNamespace;
+                continue;
+            }
+            $bundleName = preg_replace('/Bundle$/', '', $bundleName);
+            if (isset($configuration['map'][$bundleName])) {
+                $map[$this->underscore($configuration['map'][$bundleName])] = $bundleNamespace;
+                continue;
+            }
+            $map[$this->underscore($bundleName)] = $bundleNamespace;
+        }
+
+        return $map;
+    }
+
+    /**
+     * @param string $string
+     *
+     * @return string
+     */
+    private function underscore($string)
+    {
+        $string = preg_replace('/(?<=[a-z])([A-Z])/', '_$1', $string);
+
+        return strtolower($string);
+    }
+
     /**
      * Returns a column name for an embedded property.
      *
@@ -26,33 +62,13 @@ class CompanyNamingStrategy implements NamingStrategy
      *
      * @return string
      */
-    public function embeddedFieldToColumnName($propertyName, $embeddedColumnName, $className = null, $embeddedClassName = null)
-    {
+    public function embeddedFieldToColumnName(
+        $propertyName,
+        $embeddedColumnName,
+        $className = null,
+        $embeddedClassName = null
+    ) {
         return $this->underscore($propertyName).'_'.$this->underscore($embeddedColumnName);
-    }
-
-    /**
-     * Returns a table name for an entity class.
-     *
-     * @param string $className The fully-qualified class name.
-     *
-     * @return string A table name.
-     */
-    public function classToTableName($className)
-    {
-        $prefix = str_replace('app_verk_', '', $this->getTableNamePrefix($className));
-        return $this->prefix . $prefix . '_' . $this->underscore(substr($className, strrpos($className, '\\') + 1));
-    }
-
-    protected function getTableNamePrefix($className)
-    {
-        $className = ltrim($className, '\\');
-        foreach ($this->map as $prefix => $namespace) {
-            if (strpos($className, $namespace) === 0) {
-                return $prefix.'_';
-            }
-        }
-        return '';
     }
 
     /**
@@ -69,16 +85,6 @@ class CompanyNamingStrategy implements NamingStrategy
     }
 
     /**
-     * Returns the default reference column name.
-     *
-     * @return string A column name.
-     */
-    public function referenceColumnName()
-    {
-        return 'id';
-    }
-
-    /**
      * Returns a join column name for a property.
      *
      * @param string $propertyName A property name.
@@ -88,6 +94,16 @@ class CompanyNamingStrategy implements NamingStrategy
     public function joinColumnName($propertyName)
     {
         return $this->underscore($propertyName).'_'.$this->referenceColumnName();
+    }
+
+    /**
+     * Returns the default reference column name.
+     *
+     * @return string A column name.
+     */
+    public function referenceColumnName()
+    {
+        return 'id';
     }
 
     /**
@@ -101,9 +117,38 @@ class CompanyNamingStrategy implements NamingStrategy
      */
     public function joinTableName($sourceEntity, $targetEntity, $propertyName = null)
     {
-        $tableName = $this->classToTableName($sourceEntity).'_'.$this->underscore(substr($targetEntity, strrpos($targetEntity, '\\') + 1));
+        $tableName = $this->classToTableName($sourceEntity).'_'.$this->underscore(
+                substr($targetEntity, strrpos($targetEntity, '\\') + 1)
+            );
+
         return
             $tableName;
+    }
+
+    /**
+     * Returns a table name for an entity class.
+     *
+     * @param string $className The fully-qualified class name.
+     *
+     * @return string A table name.
+     */
+    public function classToTableName($className)
+    {
+        $prefix = str_replace('app_verk_', '', $this->getTableNamePrefix($className));
+
+        return $this->prefix.$prefix.'_'.$this->underscore(substr($className, strrpos($className, '\\') + 1));
+    }
+
+    protected function getTableNamePrefix($className)
+    {
+        $className = ltrim($className, '\\');
+        foreach ($this->map as $prefix => $namespace) {
+            if (strpos($className, $namespace) === 0) {
+                return $prefix.'_';
+            }
+        }
+
+        return '';
     }
 
     /**
@@ -118,40 +163,5 @@ class CompanyNamingStrategy implements NamingStrategy
     {
         return $this->classToTableName($entityName).'_'.
             ($referencedColumnName ? $this->underscore($referencedColumnName) : $this->referenceColumnName());
-    }
-
-    private function getNamingMap(KernelInterface $kernel)
-    {
-        $map = [];
-        /**
-         * @var BundleInterface $bundle;
-         */
-        foreach ($kernel->getBundles() as $bundle) {
-            $bundleNamespace = (new \ReflectionClass(get_class($bundle)))->getNamespaceName();
-            $bundleName = $bundle->getName();
-            if (isset($configuration['map'][$bundleName])) {
-                $map[$this->underscore($configuration['map'][$bundleName])] = $bundleNamespace;
-                continue;
-            }
-            $bundleName = preg_replace('/Bundle$/', '', $bundleName);
-            if (isset($configuration['map'][$bundleName])) {
-                $map[$this->underscore($configuration['map'][$bundleName])] = $bundleNamespace;
-                continue;
-            }
-            $map[ $this->underscore($bundleName) ] = $bundleNamespace;
-        }
-        return $map;
-    }
-
-    /**
-     * @param string $string
-     *
-     * @return string
-     */
-    private function underscore($string)
-    {
-        $string = preg_replace('/(?<=[a-z])([A-Z])/', '_$1', $string);
-
-        return strtolower($string);
     }
 }

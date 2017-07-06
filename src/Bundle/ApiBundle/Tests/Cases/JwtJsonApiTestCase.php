@@ -12,8 +12,7 @@ abstract class JwtJsonApiTestCase extends JsonApiTestCase
         string $userFixturePath = 'cases/jwt_user.yml',
         $withClient = true,
         $expired = JwtTokenFactory::EXPIRATION_TIME
-    )
-    {
+    ) {
         $this->loadFixturesFromFile($userFixturePath);
 
         $tokenData = [
@@ -21,13 +20,15 @@ abstract class JwtJsonApiTestCase extends JsonApiTestCase
             'exp'      => time() + $expired,
         ];
 
-        if($withClient){
+        if ($withClient) {
             $this->loadFixturesFromFile('cases/jwt_client.yml');
 
             $apiClient = $this->getService('doctrine.orm.entity_manager')
-                ->getRepository(ApiClient::class)->findOneBy([
-                    'clientId' => 1
-                ]);
+                ->getRepository(ApiClient::class)->findOneBy(
+                    [
+                        'clientId' => 1,
+                    ]
+                );
 
             $tokenData['client'] = $apiClient->getClientId();
         }

@@ -54,7 +54,7 @@ class JwtTokenFactory
 
     public function createToken($username, $password, $clientId, $secret)
     {
-        if($clientId === null || $secret === null){
+        if ($clientId === null || $secret === null) {
             throw new NotFoundHttpException("Client data missed");
         }
         /** @var ApiClient $client */
@@ -62,11 +62,11 @@ class JwtTokenFactory
         /** @var User $user */
         $user = $this->userManager->findUserByUsername($username);
 
-        if(!$apiClient){
+        if (!$apiClient) {
             throw new NotFoundHttpException("Client not found");
         }
 
-        if(!$apiClient->isEnabled()){
+        if (!$apiClient->isEnabled()) {
             throw new NotFoundHttpException("Client is blocked");
         }
 
@@ -90,6 +90,7 @@ class JwtTokenFactory
             );
 
         $this->apiAccessToken->bindTokenToUser($token, $user, $apiClient);
+
         return $token;
     }
 }

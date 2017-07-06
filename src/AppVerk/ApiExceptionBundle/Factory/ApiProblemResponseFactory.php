@@ -12,10 +12,6 @@ class ApiProblemResponseFactory implements ResponseFactoryInterface
     {
         $data = $apiProblem->toArray();
 
-        if ($data['type'] != 'about:blank') {
-            $data['type'] = 'http://localhost:8000/docs/errors#'.$data['type'];
-        }
-
         $response = new JsonResponse(
             $data,
             $apiProblem->getStatusCode()

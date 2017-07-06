@@ -14,3 +14,7 @@ services:
         arguments:
             $debug: '%kernel.debug%'
             $responseFactory: '@AppVerk\ApiExceptionBundle\Component\Factory\ResponseFactoryInterface'
+
+    AppVerk\ApiExceptionBundle\Factory\ApiProblemFactory:
+        arguments:
+            $translator: '@translator'

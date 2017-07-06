@@ -2,10 +2,10 @@
 
 namespace ApiBundle\Entity;
 
+use Component\Model\ApiAccessTokenInterface;
 use Component\Model\ApiClientInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
-use Component\Model\ApiAccessTokenInterface;
 
 /**
  * @Serializer\ExclusionPolicy("all")
@@ -14,27 +14,24 @@ use Component\Model\ApiAccessTokenInterface;
 class ApiAccessToken implements ApiAccessTokenInterface
 {
     /**
+     * @ORM\ManyToOne(targetEntity="ApiClient")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    protected $client;
+    /**
+     * @ORM\ManyToOne(targetEntity="User")
+     */
+    protected $user;
+    /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
     private $id;
-
     /**
      * @ORM\Column(type="string")
      */
     private $accessToken;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="ApiClient")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    protected $client;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     */
-    protected $user;
 
     /**
      * @return mixed
@@ -61,6 +58,16 @@ class ApiAccessToken implements ApiAccessTokenInterface
     }
 
     /**
+     * Get client
+     *
+     * @return ApiClient
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    /**
      * Set client
      *
      * @param ApiClientInterface $client
@@ -75,13 +82,13 @@ class ApiAccessToken implements ApiAccessTokenInterface
     }
 
     /**
-     * Get client
+     * Get user
      *
-     * @return ApiClient
+     * @return User
      */
-    public function getClient()
+    public function getUser()
     {
-        return $this->client;
+        return $this->user;
     }
 
     /**
@@ -96,15 +103,5 @@ class ApiAccessToken implements ApiAccessTokenInterface
         $this->user = $user;
 
         return $this;
-    }
-
-    /**
-     * Get user
-     *
-     * @return User
-     */
-    public function getUser()
-    {
-        return $this->user;
     }
 }

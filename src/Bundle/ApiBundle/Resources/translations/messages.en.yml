@@ -1,0 +1,6 @@
+security:
+    token:
+        error:
+            invalid: Invalid Token
+            data_not_found: Client data not found in token
+            client_not_found: Client doesn't exist
