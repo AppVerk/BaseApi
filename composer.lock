@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a1d8e6505c4e5c341d818d6ec1260c66",
+    "content-hash": "b237e5c832f32e28f5a0ac25bbd6f1d4",
     "packages": [
         {
             "name": "app-verk/api-exception-bundle",
@@ -47,6 +47,59 @@
                 "api-problem"
             ],
             "time": "2017-07-07T13:32:28+00:00"
+        },
+        {
+            "name": "app-verk/api-test-cases",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/AppVerk/ApiTestCasesBundle.git",
+                "reference": "ae228077a6db52f825df5e1b14f9daede0cb60e8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/AppVerk/ApiTestCasesBundle/zipball/ae228077a6db52f825df5e1b14f9daede0cb60e8",
+                "reference": "ae228077a6db52f825df5e1b14f9daede0cb60e8",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0",
+                "sensio/framework-extra-bundle": "^3.0.2",
+                "symfony/symfony": "3.3.*"
+            },
+            "require-dev": {
+                "coduo/php-matcher": "^2.1",
+                "doctrine/data-fixtures": "^1.2",
+                "guzzlehttp/guzzle": "^5.0",
+                "hautelook/alice-bundle": "^1.4",
+                "phpspec/php-diff": "^1.1",
+                "phpunit/phpunit": "^6.2",
+                "polishsymfonycommunity/symfony-mocker-container": "^1.0",
+                "symfony/phpunit-bridge": "^3.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "AppVerk\\ApiTestCasesBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michał Jędraszczyk",
+                    "email": "m.jedrasz@gmail.com"
+                }
+            ],
+            "description": "Test cases for boost up writing PHPUnit tests for API with Symfony 3 framework",
+            "keywords": [
+                "Test Cases",
+                "api cases",
+                "phpunit"
+            ],
+            "time": "2017-07-07T14:42:34+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -5124,7 +5177,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.5.9"
+        "php": "^7.0"
     },
     "platform-dev": []
 }

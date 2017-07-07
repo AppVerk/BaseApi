@@ -23,8 +23,9 @@
         ]
     },
     "require": {
-        "php": ">=5.5.9",
+        "php": "^7.0",
         "app-verk/api-exception-bundle": "^1.0",
+        "app-verk/api-test-cases": "^1.0",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
         "incenteev/composer-parameter-handler": "^2.0",
@@ -39,15 +40,7 @@
         "twig/twig": "^1.0||^2.0"
     },
     "require-dev": {
-        "coduo/php-matcher": "^2.1",
-        "doctrine/data-fixtures": "^1.2",
-        "guzzlehttp/guzzle": "^5.0",
-        "hautelook/alice-bundle": "^1.4",
-        "phpspec/php-diff": "^1.1",
-        "phpunit/phpunit": "^6.2",
-        "polishsymfonycommunity/symfony-mocker-container": "^1.0",
-        "sensio/generator-bundle": "^3.0",
-        "symfony/phpunit-bridge": "^3.0"
+        "sensio/generator-bundle": "^3.0"
     },
     "scripts": {
         "symfony-scripts": [
