@@ -24,6 +24,7 @@
     },
     "require": {
         "php": ">=5.5.9",
+        "app-verk/api-exception-bundle": "^1.0",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
         "incenteev/composer-parameter-handler": "^2.0",
