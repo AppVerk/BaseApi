@@ -24,10 +24,12 @@ class FBExceptionResponseFactory implements ResponseFactoryInterface
 
     public function prepareData($data)
     {
+        $message = ($data['details']) ? $data['title'].': '.$data['details'] : $data['title'];
+
         return [
             'error' => [
                 'code'    => $data['status'],
-                'message' => ($data['details']) ?? $data['title'],
+                'message' => $message
             ],
         ];
     }
