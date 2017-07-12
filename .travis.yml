@@ -30,6 +30,7 @@ env:
 
 # Update composer
 before-install:
+  - phpenv config-rm xdebug.ini
   - sudo cp -f $VHOST_FILE /etc/apache2/sites-available/$VHOST_CONF
   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/$VHOST_CONF
   - sudo sed -e "s?%VHOST_URL%?$VHOST_URL?g" --in-place /etc/apache2/sites-available/$VHOST_CONF
@@ -42,7 +43,15 @@ before-install:
 # Install composer dependencies,
 # Create database, schema and fixtures
 install:
-  - composer install --dev
+  - composer install
+  # Remove application cache and logs ...
+  - rm -Rf var/cache/*
+  - rm -Rf var/logs/*
+  # Prepare application cache ...
+  - php bin/console cache:warm --env=test
+  # Grant application cache and logs permissions ...
+  - chmod -Rf 777 var/cache/
+  - chmod -Rf 777 var/logs/
   - cp app/config/parameters.yml.dist app/config/parameters.yml
   - php bin/console doctrine:database:create --env=test
   - php bin/console doctrine:schema:create --env=test
