@@ -20,7 +20,7 @@
         <server name="KERNEL_CLASS" value="AppKernel"/>
         <server name="IS_DOCTRINE_ORM_SUPPORTED" value="true"/>
         <server name="KERNEL_DIR" value="/app/" />
-        <env name="TEST_BASE_URL" value="http://baseapi.app" />
+        <env name="TEST_BASE_URL" value="http://localhost:8080" />
     </php>
 
     <testsuites>
