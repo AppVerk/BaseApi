@@ -23,27 +23,17 @@ matrix:
 # Define an environment variable
 env:
   - SYMFONY_VERSION="3.3.*" DB=mysql
-  - SOURCE_DIR=src
-  - VHOST_FILE=.travis.vhost
-  - VHOST_CONF=travis.conf
-  - VHOST_URL=baseapi.app
 
 # Update composer
 before-install:
   - phpenv config-rm xdebug.ini
-  - sudo cp -f $VHOST_FILE /etc/apache2/sites-available/$VHOST_CONF
-  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/$VHOST_CONF
-  - sudo sed -e "s?%VHOST_URL%?$VHOST_URL?g" --in-place /etc/apache2/sites-available/$VHOST_CONF
-  - sudo a2enmod rewrite
-  - sudo a2ensite $VHOST_CONF
-  - sudo service apache2 restart
   - php -S localhost:8000 web
   - sleep 3
-  - composer self-update
 
 # Install composer dependencies,
 # Create database, schema and fixtures
 install:
+  - composer self-update
   - composer install
   # Remove application cache and logs ...
   - rm -Rf var/cache/*
@@ -65,7 +55,3 @@ notifications:
     email: false
 
 script: ./vendor/bin/phpunit --configuration phpunit.xml.dist
-
-addons:
-  hosts:
-    - baseapi.app
