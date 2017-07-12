@@ -37,6 +37,8 @@ before-install:
   - sudo a2enmod rewrite
   - sudo a2ensite $VHOST_CONF
   - sudo service apache2 restart
+  - php -S localhost:8000 web
+  - sleep 3
   - composer self-update
 
 # Install composer dependencies,
