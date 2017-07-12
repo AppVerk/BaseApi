@@ -71,6 +71,9 @@ before_script:
   - openssl genrsa -passout pass:jwt -out var/jwt/private.pem -aes256 4096
   - openssl rsa -passin pass:jwt -pubout -in var/jwt/private.pem -out var/jwt/public.pem
 
+install:
+  - sudo apt-get -y install apache2 libapache2-mod-fastcgi > /dev/null
+
 # After a build, send email notification with the build results
 notifications:
     email: false
