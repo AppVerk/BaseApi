@@ -35,8 +35,6 @@ env:
 # Create database, schema and fixtures
 
 before_script:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y apache2 libapache2-mod-fastcgi
   # enable php-fpm
   - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
   - sudo a2enmod rewrite actions fastcgi alias
@@ -76,5 +74,13 @@ before_script:
 notifications:
     email: false
 
+addons:
+    apt:
+        packages:
+          - apache2
+          - libapache2-mod-fastcgi
+
 script:
   - ./vendor/bin/phpunit --configuration phpunit.xml.dist
+
+install: true
