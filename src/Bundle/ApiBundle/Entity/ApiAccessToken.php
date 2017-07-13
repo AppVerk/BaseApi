@@ -29,7 +29,7 @@ class ApiAccessToken implements ApiAccessTokenInterface
      */
     private $id;
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text")
      */
     private $accessToken;
 
