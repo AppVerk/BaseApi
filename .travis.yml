@@ -34,8 +34,7 @@ env:
 # Install composer dependencies,
 # Create database, schema and fixtures
 
-before_install:
-  - sudo add-apt-repository --yes ppa:ondrej/apache2
+install:
   - sudo apt-get -qq update
   - sudo apt-get install -y apache2 libapache2-mod-fastcgi
   # enable php-fpm
