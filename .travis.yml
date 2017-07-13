@@ -3,7 +3,6 @@ language: php
 
 # Allows use container-based infrastructure
 sudo: true
-dist: trusty
 
 # Start mysql service
 services:
