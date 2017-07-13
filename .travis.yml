@@ -2,7 +2,7 @@
 language: php
 
 # Allows use container-based infrastructure
-sudo: false
+sudo: true
 dist: trusty
 
 # Start mysql service
