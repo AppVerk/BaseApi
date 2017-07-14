@@ -5,7 +5,6 @@
     "description" : "Base API project for RESTful apps",
     "autoload": {
         "psr-4": {
-            "AppVerk\\": "src/AppVerk",
             "ApiBundle\\": "src/Bundle/ApiBundle",
             "WebBundle\\": "src/Bundle/WebBundle",
             "Component\\": "src/Component"
@@ -41,6 +40,7 @@
         "twig/twig": "^1.0||^2.0"
     },
     "require-dev": {
+        "hautelook/alice-bundle": "^1.4",
         "sensio/generator-bundle": "^3.0"
     },
     "scripts": {
@@ -67,7 +67,6 @@
         "symfony-bin-dir": "bin",
         "symfony-var-dir": "var",
         "symfony-web-dir": "web",
-        "symfony-tests-dir": "tests",
         "symfony-assets-install": "relative",
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"
