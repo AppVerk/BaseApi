@@ -1,7 +1,8 @@
 {
     "name": "michaljedraszczyk/baseapi",
-    "license": "proprietary",
+    "license": "MIT",
     "type": "project",
+    "description" : "Base API project for RESTful apps",
     "autoload": {
         "psr-4": {
             "AppVerk\\": "src/AppVerk",
