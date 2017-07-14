@@ -5,15 +5,11 @@ namespace AppVerk\FormHandlerBundle\Form\Handler;
 use Component\Form\Model\FormModelInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 abstract class AbstractFormHandler
 {
     /** @var  FormFactory */
     private $formFactory;
-
-    /** @var RequestStack */
-    private $requestStack;
 
     /** @var FormInterface */
     private $form;
@@ -30,15 +26,6 @@ abstract class AbstractFormHandler
     public function setFormFactory(FormFactory $formFactory)
     {
         $this->formFactory = $formFactory;
-    }
-
-    /**
-     * @required
-     * @param RequestStack $requestStack
-     */
-    public function setRequestStack(RequestStack $requestStack)
-    {
-        $this->requestStack = $requestStack;
     }
 
     public function process(string $formTypeClass, FormModelInterface $model) : bool
