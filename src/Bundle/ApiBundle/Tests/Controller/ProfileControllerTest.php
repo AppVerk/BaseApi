@@ -12,7 +12,6 @@ class ProfileControllerApiTest extends JwtJsonApiTestCase
         $this->authenticateFixtureUser('profile/user.yml');
         $response = $this->client->get('/api/profile/me');
 
-        echo $response->getEffectiveUrl();
         $this->assertResponse($response, 'profile/me/success', Response::HTTP_OK);
     }
 
