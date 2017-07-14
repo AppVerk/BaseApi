@@ -7,6 +7,10 @@ services:
     AppVerk\ApiExceptionBundle\Factory\ResponseFactoryInterface:
         class: '%appverk_api_exception.response_factory%'
 
+    Component\Doctrine\ApiClientManagerInterface: '@ApiBundle\Doctrine\ApiClientManager'
+    AppVerk\ApiExceptionBundle\Component\Factory\ApiProblemFactoryInterface: '@AppVerk\ApiExceptionBundle\Factory\ApiProblemFactory'
+    Component\Doctrine\UserProviderInterface: '@ApiBundle\Doctrine\UserManager'
+
     ApiBundle\Security\JwtTokenAuthenticator:
         arguments:
             $responseFactory: '@AppVerk\ApiExceptionBundle\Factory\ResponseFactoryInterface'
