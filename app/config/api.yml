@@ -6,3 +6,23 @@ lexik_jwt_authentication:
 
 app_verk_api_exception:
     response_factory: AppVerk\ApiExceptionBundle\Factory\ApiProblemResponseFactory
+
+nelmio_api_doc:
+     name: 'API documentation'
+     default_sections_opened: false
+     sandbox:
+         enabled: true
+         body_format:
+             formats: [ form, json ]
+             default_format: json
+         request_format:
+             formats:
+                 html: text/html
+                 json: application/json
+                 xml: application/xml
+             method: format_param
+             default_format: json
+         authentication:
+             name: Authorization
+             delivery: http
+             type:     bearer

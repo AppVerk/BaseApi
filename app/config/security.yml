@@ -14,12 +14,18 @@ security:
             pattern: ^/api/security/
             anonymous: true
             stateless: true
+
+        doc:
+            pattern: ^/api/doc
+            anonymous: true
+
         api:
             pattern: ^/api/
             stateless: true
             guard:
                 authenticators:
                     - 'ApiBundle\Security\JwtTokenAuthenticator'
+
         main:
             pattern: ^/
             anonymous: true

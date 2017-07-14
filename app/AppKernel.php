@@ -18,6 +18,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
+            new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
 
             new AppVerk\ApiExceptionBundle\AppVerkApiExceptionBundle(),
             new AppVerk\ApiTestCasesBundle\AppVerkApiTestCasesBundle(),
