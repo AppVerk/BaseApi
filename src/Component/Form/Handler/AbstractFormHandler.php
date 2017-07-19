@@ -1,18 +1,23 @@
 <?php
 
-namespace AppVerk\FormHandlerBundle\Form\Handler;
+namespace Component\Form\Handler;
 
 use Component\Form\Model\FormModelInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 abstract class AbstractFormHandler
 {
     /** @var  FormFactory */
-    private $formFactory;
+    protected $formFactory;
 
     /** @var FormInterface */
-    private $form;
+    protected $form;
+
+    /** @var Request */
+    protected $request;
 
     /**
      * @var array
@@ -28,15 +33,28 @@ abstract class AbstractFormHandler
         $this->formFactory = $formFactory;
     }
 
+    /**
+     * @required
+     * @param RequestStack $requestStack
+     */
+    public function setRequest(RequestStack $requestStack)
+    {
+        $this->request = $requestStack->getCurrentRequest();
+    }
+
     public function process(string $formTypeClass, FormModelInterface $model) : bool
     {
         $this->createForm($formTypeClass, $model);
+
+        $this->form->submit($this->request->request->get($this->form->getName()));
+
+        $this->success();
+
         if(!$this->isValid()){
             $this->errors = $this->getErrorsFromForm($this->form);
             return false;
         }
 
-        $this->success();
         return true;
     }
 
