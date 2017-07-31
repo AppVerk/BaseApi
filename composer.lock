@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "138d0761a842b9b4d2d5d0ba9e6ca91c",
+    "content-hash": "82e158bf6118a40940efdb694c0b28fd",
     "packages": [
         {
             "name": "app-verk/api-exception-bundle",
@@ -2941,12 +2941,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/AppVerk/ApiTestCasesBundle.git",
-                "reference": "ae228077a6db52f825df5e1b14f9daede0cb60e8"
+                "reference": "c7e4b07d5f0d4a0de369ffcc4495904dd02e52de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/AppVerk/ApiTestCasesBundle/zipball/ae228077a6db52f825df5e1b14f9daede0cb60e8",
-                "reference": "ae228077a6db52f825df5e1b14f9daede0cb60e8",
+                "url": "https://api.github.com/repos/AppVerk/ApiTestCasesBundle/zipball/c7e4b07d5f0d4a0de369ffcc4495904dd02e52de",
+                "reference": "c7e4b07d5f0d4a0de369ffcc4495904dd02e52de",
                 "shasum": ""
             },
             "require": {
