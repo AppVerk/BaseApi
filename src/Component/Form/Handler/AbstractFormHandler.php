@@ -3,10 +3,14 @@
 namespace Component\Form\Handler;
 
 use Component\Form\Model\FormModelInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Translation\Translator;
 
 abstract class AbstractFormHandler
 {
@@ -25,12 +29,32 @@ abstract class AbstractFormHandler
     private $errors = [];
 
     /**
-     * @required
-     * @param FormFactory $formFactory
+     * @var Translator
      */
-    public function setFormFactory(FormFactory $formFactory)
+    private $translator;
+
+    /**
+     * @required
+     * @param FormFactoryInterface $formFactory
+     */
+    public function setFormFactory(FormFactoryInterface $formFactory)
     {
         $this->formFactory = $formFactory;
+    }
+
+    /**
+     * @required
+     * @param Translator $translator
+     */
+    public function setTranslator(Translator $translator)
+    {
+        $this->translator = $translator;
+    }
+
+    public function buildForm(string $formTypeClass, FormModelInterface $model)
+    {
+        $this->createForm($formTypeClass, $model);
+        return $this;
     }
 
     /**
@@ -42,15 +66,17 @@ abstract class AbstractFormHandler
         $this->request = $requestStack->getCurrentRequest();
     }
 
-    public function process(string $formTypeClass, FormModelInterface $model) : bool
+    public function process() : bool
     {
-        $this->createForm($formTypeClass, $model);
-
+        $this->validateForm();
         $this->form->submit($this->request->request->get($this->form->getName()));
 
-        $this->success();
-
         if(!$this->isValid()){
+            $this->errors = $this->getErrorsFromForm($this->form);
+            return false;
+        }
+
+        if(!$this->success()){
             $this->errors = $this->getErrorsFromForm($this->form);
             return false;
         }
@@ -105,6 +131,39 @@ abstract class AbstractFormHandler
     public function getErrors() : array
     {
         return $this->errors;
+    }
+
+    public function getErrorsAsString() : string
+    {
+        $message = '';
+        foreach ($this->errors as $error){
+            if(is_string($error)){
+                $message .= $error;
+                continue;
+            }
+            $message .= implode(", ", $error);
+        }
+        return $message;
+    }
+
+    public function getFormView() : FormView
+    {
+        $this->validateForm();
+
+        return $this->form->createView();
+    }
+
+    protected function validateForm()
+    {
+        if ($this->form === null) {
+            throw new \Exception("First u need call buildForm method to create form");
+        }
+    }
+
+    protected function addFormError(string $message, array $params = [])
+    {
+        $message = $this->translator->trans($message, $params, 'forms');
+        $this->form->addError(new FormError($message));
     }
 
     /**
