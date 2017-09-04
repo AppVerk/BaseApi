@@ -69,7 +69,7 @@ abstract class AbstractFormHandler
     public function process() : bool
     {
         $this->validateForm();
-        $this->form->submit($this->request->request->get($this->form->getName()));
+        $this->form->handleRequest($this->request);
 
         if(!$this->isValid()){
             $this->errors = $this->getErrorsFromForm($this->form);
