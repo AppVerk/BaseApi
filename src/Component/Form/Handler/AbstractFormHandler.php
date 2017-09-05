@@ -70,7 +70,9 @@ abstract class AbstractFormHandler
     {
         $this->validateForm();
         $this->form->handleRequest($this->request);
-        $this->form->submit($this->request->request->get($this->form->getName()));
+        if ($this->form->isSubmitted() === false) {
+            $this->form->submit($this->request->request->get($this->form->getName()));
+        }
 
         if(!$this->isValid()){
             $this->errors = $this->getErrorsFromForm($this->form);
