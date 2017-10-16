@@ -44,9 +44,10 @@
             "description": "catch all Symfony 3.3 errors and convert it to problem json RFC7807 response",
             "keywords": [
                 "api exceptions",
-                "api-problem"
+                "api-problem",
+                "problem json"
             ],
-            "time": "2017-07-07T13:32:28+00:00"
+            "time": "2017-07-07T13:36:09+00:00"
         },
         {
             "name": "composer/ca-bundle",
