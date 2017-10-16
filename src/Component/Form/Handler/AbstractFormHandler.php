@@ -2,7 +2,6 @@
 
 namespace Component\Form\Handler;
 
-use Component\Form\Model\FormModelInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -10,7 +9,8 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 abstract class AbstractFormHandler
 {
@@ -29,12 +29,13 @@ abstract class AbstractFormHandler
     private $errors = [];
 
     /**
-     * @var Translator
+     * @var TranslatorInterface
      */
     private $translator;
 
     /**
      * @required
+     *
      * @param FormFactoryInterface $formFactory
      */
     public function setFormFactory(FormFactoryInterface $formFactory)
@@ -44,21 +45,24 @@ abstract class AbstractFormHandler
 
     /**
      * @required
-     * @param Translator $translator
+     *
+     * @param TranslatorInterface $translator
      */
-    public function setTranslator(Translator $translator)
+    public function setTranslator(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
-    public function buildForm(string $formTypeClass, FormModelInterface $model)
+    public function buildForm(string $formTypeClass, $model)
     {
         $this->createForm($formTypeClass, $model);
+
         return $this;
     }
 
     /**
      * @required
+     *
      * @param RequestStack $requestStack
      */
     public function setRequest(RequestStack $requestStack)
@@ -66,22 +70,28 @@ abstract class AbstractFormHandler
         $this->request = $requestStack->getCurrentRequest();
     }
 
-    public function process() : bool
+    public function process()
     {
         $this->validateForm();
+
         $this->form->handleRequest($this->request);
         if ($this->form->isSubmitted() === false) {
             $this->form->submit($this->request->request->get($this->form->getName()));
         }
-
-        if(!$this->isValid()){
+        if (!$this->isValid()) {
             $this->errors = $this->getErrorsFromForm($this->form);
+
+            return false;
+        }
+        $success = $this->success();
+        if (!$success) {
+            $this->errors = $this->getErrorsFromForm($this->form);
+
             return false;
         }
 
-        if(!$this->success()){
-            $this->errors = $this->getErrorsFromForm($this->form);
-            return false;
+        if ($success) {
+            return ($success) ? $success : false;
         }
 
         return true;
@@ -91,9 +101,10 @@ abstract class AbstractFormHandler
      * Build inheritance form errors
      *
      * @param FormInterface $form
+     *
      * @return array
      */
-    protected function getErrorsFromForm(FormInterface $form) : array
+    protected function getErrorsFromForm(FormInterface $form): array
     {
         $errors = [];
         foreach ($form->getErrors() as $error) {
@@ -103,7 +114,7 @@ abstract class AbstractFormHandler
         foreach ($form->all() as $childForm) {
             if ($childForm instanceof FormInterface) {
                 if ($childErrors = $this->getErrorsFromForm($childForm)) {
-                    $errors[$childForm->getName()] = $childErrors;
+                    $errors = array_merge($errors, $childErrors);
                 }
             }
         }
@@ -111,11 +122,12 @@ abstract class AbstractFormHandler
         return $errors;
     }
 
-    public function isValid() : bool
+    public function isValid(): bool
     {
         if (true === $this->form->isValid()) {
             return true;
         }
+
         return false;
     }
 
@@ -131,25 +143,32 @@ abstract class AbstractFormHandler
     /**
      * @return array
      */
-    public function getErrors() : array
+    public function getErrors(): array
     {
         return $this->errors;
     }
 
-    public function getErrorsAsString() : string
+    public function getErrorsAsString(): string
     {
         $message = '';
-        foreach ($this->errors as $error){
-            if(is_string($error)){
+        foreach ($this->errors as $error) {
+            if (is_string($error)) {
                 $message .= $error;
                 continue;
             }
-            $message .= implode(", ", $error);
+            if (!is_array($error)) {
+                $message .= implode(", ", $error);
+            } else {
+                foreach ($error as $messages) {
+                    $message .= implode(", ", $messages);
+                }
+            }
         }
+
         return $message;
     }
 
-    public function getFormView() : FormView
+    public function getFormView(): FormView
     {
         $this->validateForm();
 
@@ -163,10 +182,24 @@ abstract class AbstractFormHandler
         }
     }
 
-    protected function addFormError(string $message, array $params = [])
+    protected function addFormError(string $message, array $params = [], $field = null)
     {
         $message = $this->translator->trans($message, $params, 'forms');
-        $this->form->addError(new FormError($message));
+
+        if ($field !== null) {
+            $this->form->get($field)->addError(new FormError($message));
+        } else {
+            $this->form->addError(new FormError($message));
+        }
+    }
+
+    protected function createAccessDeniedException($attributes, $object = null)
+    {
+        $exception = new AccessDeniedException('Access Denied.');
+        $exception->setAttributes($attributes);
+        $exception->setSubject($object);
+
+        throw $exception;
     }
 
     /**
