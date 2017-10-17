@@ -26,7 +26,7 @@ abstract class AbstractFormHandler
     /**
      * @var array
      */
-    private $errors = [];
+    protected $errors = [];
 
     /**
      * @var TranslatorInterface
@@ -114,7 +114,7 @@ abstract class AbstractFormHandler
         foreach ($form->all() as $childForm) {
             if ($childForm instanceof FormInterface) {
                 if ($childErrors = $this->getErrorsFromForm($childForm)) {
-                    $errors = array_merge($errors, $childErrors);
+                    $errors[$childForm->getName()] = $childErrors;
                 }
             }
         }
@@ -159,6 +159,10 @@ abstract class AbstractFormHandler
             if (!is_array($error)) {
                 $message .= implode(", ", $error);
             } else {
+                if (count($error) === 1) {
+                    $message .= $error[0];
+                    continue;
+                }
                 foreach ($error as $messages) {
                     $message .= implode(", ", $messages);
                 }
